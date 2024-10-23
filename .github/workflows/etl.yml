@@ -1,10 +1,12 @@
-name: etl run
+name: ETL Run
 
 on:
   schedule:
-    - cron: '0  7 * * *'
+    - cron: '0 7 * * *'
+  workflow_dispatch:  # Agregar esta línea para permitir el disparo manual
+
 jobs:
- update:
+  update:
     runs-on: ubuntu-latest
 
     steps:
