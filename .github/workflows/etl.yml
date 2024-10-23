@@ -5,29 +5,40 @@ on:
     - cron: '0 7 * * *'
   workflow_dispatch: 
 
+env:
+  SURVEY_URL: ${{ secrets.SURVEY_URL }}
+  SURVEY_USERNAME: ${{ secrets.SURVEY_USERNAME }}
+  SURVEY_PASSWORD: ${{ secrets.SURVEY_PASSWORD }}
+  SURVEY_ITEM_ID: ${{ secrets.SURVEY_ITEM_ID }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  PORT: ${{ secrets.PORT }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  USER_NAME: ${{ secrets.USER_NAME }}
+  HOST: ${{ secrets.HOST }}
+
 jobs:
   update:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.11'
-
-    - name: Install krb5
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libkrb5-dev
+        
+    - uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        
         pip install -r requirements.txt
 
     - name: Download data from api
       run: python main.py
+
